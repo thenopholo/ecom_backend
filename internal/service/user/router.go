@@ -21,5 +21,4 @@ func (h *Handler) RegisterRouter(router *mux.Router) {
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request)  {}
 
-
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request)  {}
