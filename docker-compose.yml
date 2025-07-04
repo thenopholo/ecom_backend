@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecom_postgres
+    environment:
+      POSTGRES_USER: ecom_user
+      POSTGRES_PASSWORD: ecom_password
+      POSTGRES_DB: ecom_backend
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ecom_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecom_user -d ecom_backend"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - ecom_network
+
+  # Opcional: pgAdmin para gerenciar o banco visualmente
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ecom_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ecom.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False" # Modo desktop
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - ecom_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  ecom_postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  ecom_network:
+    driver: bridge
